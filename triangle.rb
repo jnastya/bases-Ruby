@@ -7,15 +7,16 @@ c = gets.chomp.to_f
 
 arr = [a, b, c]
 arr.sort!
+is_triange = arr[0]**2 + arr[1]**2 == arr[2]**2
+is_isosceles = arr.uniq.length == 2
+is_equilateral = arr.uniq.length == 1
 
-if arr[0]**2 + arr[1]**2 == arr[2]**2
-    if arr.uniq.length < 3
-        puts "Треугольник прямоугольный и равнобедренный"
-    else
-        puts "Треугольник прямоугольный"
-    end
-elsif arr.uniq.length == 1
-    puts "Треугольник равносторонний"
+if is_triange
+  puts "Треугольник прямоугольный"
+elsif is_isosceles
+  puts "Треугольник равнобедренный"
+elsif is_equilateral
+  puts "Треугольник равносторонний"
 else
-    puts "Треугольник разносторонний, не прямоугольный"
+  puts "Треугольник разносторонний, не прямоугольный"
 end
