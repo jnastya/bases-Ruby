@@ -20,11 +20,9 @@ end
 
 days = 0
 
-i = 0
-current_year.each do |current_month_days|
-  break if i == month-1
+current_year.each_with_index do |current_month_days, index|
+  break if index == month-1
   days += current_month_days
-  i += 1
 end
 
 days += day
