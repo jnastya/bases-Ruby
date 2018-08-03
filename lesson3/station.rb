@@ -17,15 +17,16 @@ class Station
   end
 
   def trains_by_type(type)
-    @all_trains.each do |train|
+    @all_trains.select do |train|
       if train.type == type
-        puts "#{train}"
+        train
       end
     end
   end
 
-  def send_train(number)
-    @all_trains.delete_if { |train| train.number == number }
+  def send_train(train, step)
+    @all_trains.delete(train)
+    train.move(step)
   end
 end
 
@@ -95,8 +96,18 @@ class Train
   end
 
   def station_info
-    puts "Предыдущая станция: #{@current_route.all_stations[@current_station_index-1]}
-          Текущая станция: #{@current_route.all_stations[@current_station_index]}
-          Следующая станция #{@current_route.all_stations[@current_station_index+1]}"
+    if @current_station_index > 0
+      puts "Предыдущая станция: #{@current_route.all_stations[@current_station_index-1].station_name}"
+    else
+      puts "Предыдущая станция: Депо"
+    end
+
+    puts "Текущая станция: #{@current_route.all_stations[@current_station_index].station_name}"
+
+    if @current_route.all_stations.length-1 != @current_station_index
+      puts "Следующая станция: #{@current_route.all_stations[@current_station_index+1].station_name}"
+    else
+      puts "Следующая станция: Депо"
+    end
   end
 end
