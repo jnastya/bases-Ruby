@@ -159,29 +159,6 @@ class RailRoad
         user_select = gets.to_i
         station = @stations[user_select]
         station.all_trains.each { |train| puts train.inspect }
-
-        # puts "Введите индекс поезда из списка добавленных поездов, чтобы посмотреть список назначенных поезду станций"
-        # puts "#{@trains}"
-        # user_select = gets.to_i
-        # train = @trains[user_select]
-
-        # train.station_info
-        #
-        # def station_info
-        #   if @current_station_index > 0
-        #     puts "Предыдущая станция: #{@current_route.all_stations[@current_station_index-1].station_name}"
-        #   else
-        #     puts "Предыдущая станция: Депо"
-        #   end
-        #
-        #   puts "Текущая станция: #{@current_route.all_stations[@current_station_index].station_name}"
-        #
-        #   if @current_route.all_stations.length-1 != @current_station_index
-        #     puts "Следующая станция: #{@current_route.all_stations[@current_station_index+1].station_name}"
-        #   else
-        #     puts "Следующая станция: Депо"
-        #   end
-
       else
         puts "Ошибка. Выберите цифру из списка"
       end
