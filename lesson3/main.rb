@@ -11,6 +11,8 @@ require_relative 'wagon_cargo'
 
 class RailRoad
 
+  attr_accessor :stations, :trains, :routes, :wagons
+
   def initialize
     @stations = []
     @trains = []
@@ -29,7 +31,8 @@ class RailRoad
       puts "7. Добавить вагон к поезду"
       puts "8. Отцепить вагон от поезда"
       puts "9. Переместить поезд по маршруту вперед и назад"
-      puts "10. Просмотреть список станций и список поездов на станции"
+      puts "10. Просмотреть список станций"
+      puts "11. Просмотреть список поездов на станции"
       puts "0. Выход"
       puts "Выберите вариант..."
       choice = gets.to_i
@@ -45,30 +48,38 @@ class RailRoad
         number = gets.chomp
         puts "Введите тип поезда (pass или cargo)"
         type = gets.chomp
-        @trains << Train.new(number, type)
+        if type == 'pass'
+          @trains << PassTrain.new(number)
+        elsif type == 'cargo'
+          @trains << CargoTrain.new(number)
+        end
       when 3
         puts "Текущие добавленные станции"
-        puts "#{@stations}"
+        @stations.each { |station| puts station.inspect }
         puts "Введите индекс начальной станции"
         start_station_index = gets.to_i
         puts "Введите индекс конечной станции"
         end_station_index = gets.to_i
         @routes << Route.new(@stations[start_station_index], @stations[end_station_index])
       when 4
-        puts "Введите тип вагона"
+        puts "Введите тип вагона ('pass' или 'cargo')"
         type = gets.chomp
-        @wagons << Wagon.new(type)
+        if type == 'pass'
+          @wagons << PassWagon.new
+        elsif type == 'cargo'
+          @wagons << CargoWagon.new
+        end
         puts "Вы создали вагоны #{@wagons}"
       when 5
         puts "Введите индекс маршрута из списка добавленных маршрутов"
-        puts "#{@routes}"
+        @routes.each { |route| puts route.inspect }
         user_select = gets.to_i
         route = @routes[user_select]
         puts "Введите '+' или '-' для добавления/удаления станций"
         input = gets.chomp.downcase
         if input == "+"
           puts "Введите индекс промежуточной станции из списка текущих станций, которую хотите добавить"
-          puts "#{@stations}"
+          @stations.each { |station| puts station.inspect }
           user_select = gets.to_i
           station = @stations[user_select]
           route.add_mid_station(station)
@@ -85,11 +96,11 @@ class RailRoad
         end
       when 6
         puts "Введите индекс маршрута из списка добавленных маршрутов"
-        puts "#{@routes}"
+        @routes.each { |route| puts route.inspect }
         user_select = gets.to_i
         route = @routes[user_select]
         puts "Введите индекс поезда из списка добавленных поездов"
-        puts "#{@trains}"
+        @trains.each { |train| puts train.inspect }
         user_select = gets.to_i
         train = @trains[user_select]
         train.schedule(route)
@@ -98,45 +109,79 @@ class RailRoad
         puts "Поезд #{train.inspect} находится на станции #{route.all_stations[0]}"
       when 7
         puts "Введите индекс поезда из списка добавленных поездов"
-        puts "#{@trains}"
+        @trains.each { |train| puts train.inspect }
         user_select = gets.to_i
         train = @trains[user_select]
         puts "Введите индекс вагона, который необходимо добавить из списка добавленных вагонов"
-        puts "#{@wagons}"
+        @wagons.each { |wagon| puts wagon.inspect }
         user_select = gets.to_i
         wagon = @wagons[user_select]
         train.add_wagon(wagon)
         puts "Текущее состояние поезда #{train.inspect}"
       when 8
         puts "Введите индекс поезда из списка добавленных поездов"
-        puts "#{@trains}"
+        @trains.each { |train| puts train.inspect }
         user_select = gets.to_i
         train = @trains[user_select]
         puts "Введите индекс вагона, который необходимо отцепить от поезда"
-        puts "#{train.wagons}"
+        train.wagons.each { |wagon| puts wagon.inspect }
         user_select = gets.to_i
         wagon = train.wagons[user_select]
         train.delete_wagon(wagon)
         puts "Вагон #{wagon.inspect} отцеплен от поезда #{train.inspect}"
       when 9
         puts "Введите индекс поезда из списка добавленных поездов, который Вы хотите переместить"
-        puts "#{@trains}"
+        @trains.each { |train| puts train.inspect }
         user_select = gets.to_i
         train = @trains[user_select]
         puts "Введите шаг forward или backward"
         step = gets.chomp
         train.move(step)
+        if train.current_station_index > 0
+          puts "Предыдущая станция: #{train.current_route.all_stations[train.current_station_index-1].station_name}"
+        else
+          puts "Предыдущая станция: Депо"
+        end
+
+        puts "Текущая станция: #{train.current_route.all_stations[train.current_station_index].station_name}"
+
+        if train.current_route.all_stations.length-1 != train.current_station_index
+          puts "Следующая станция: #{train.current_route.all_stations[train.current_station_index+1].station_name}"
+        else
+          puts "Следующая станция: Депо"
+        end
       when 10
-        puts "Введите индекс поезда из списка добавленных поездов, чтобы посмотреть список назначенных поезду станций"
-        puts "#{@trains}"
-        user_select = gets.to_i
-        train = @trains[user_select]
-        puts "Введите индекс станции из списка добавленных станций, для просмотра списка поездов, находящихся на станции"
-        puts "#{@stations}"
+        puts "Список станций:"
+        @stations.each { |station| puts station.inspect }
+      when 11
+        puts "Введите индекс станции, для просмотра поездов, находящихся на этой станции"
+        @stations.each { |station| puts station.inspect }
         user_select = gets.to_i
         station = @stations[user_select]
-        train.station_info
-        station.all_trains
+        station.all_trains.each { |train| puts train.inspect }
+
+        # puts "Введите индекс поезда из списка добавленных поездов, чтобы посмотреть список назначенных поезду станций"
+        # puts "#{@trains}"
+        # user_select = gets.to_i
+        # train = @trains[user_select]
+
+        # train.station_info
+        #
+        # def station_info
+        #   if @current_station_index > 0
+        #     puts "Предыдущая станция: #{@current_route.all_stations[@current_station_index-1].station_name}"
+        #   else
+        #     puts "Предыдущая станция: Депо"
+        #   end
+        #
+        #   puts "Текущая станция: #{@current_route.all_stations[@current_station_index].station_name}"
+        #
+        #   if @current_route.all_stations.length-1 != @current_station_index
+        #     puts "Следующая станция: #{@current_route.all_stations[@current_station_index+1].station_name}"
+        #   else
+        #     puts "Следующая станция: Депо"
+        #   end
+
       else
         puts "Ошибка. Выберите цифру из списка"
       end

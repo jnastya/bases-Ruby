@@ -1,10 +1,9 @@
 class Train
   attr_accessor :speed, :current_route, :wagons
-  attr_reader :type, :number
+  attr_reader :number, :current_station_index
 
-  def initialize(number, type)
+  def initialize(number)
     @number = number
-    @type = type
     @wagons = []
     @speed = 0
   end
@@ -14,7 +13,8 @@ class Train
   end
 
   def add_wagon(wagon)
-    if speed == 0 && @type == wagon.type
+    is_proper_type = ((self.class.to_s.include? "Pass") && (wagon.class.to_s.include? "Pass")) || ((self.class.to_s.include? "Cargo") && (wagon.class.to_s.include? "Cargo"))
+    if speed == 0 && is_proper_type
       @wagons << wagon
     else
       puts "Прицепка вагона не возможна"
@@ -35,26 +35,11 @@ class Train
   end
 
   def move(step)
-    if step == 'forward' && (@current_route.all_stations.length-1 != @current_station_index)
+    free_run = @current_route.all_stations.length-1 != @current_station_index
+    if step == 'forward' && free_run
       @current_station_index += 1
     elsif step == 'backward' && @current_station_index != 0
       @current_station_index -= 1
-    end
-  end
-
-  def station_info
-    if @current_station_index > 0
-      puts "Предыдущая станция: #{@current_route.all_stations[@current_station_index-1].station_name}"
-    else
-      puts "Предыдущая станция: Депо"
-    end
-
-    puts "Текущая станция: #{@current_route.all_stations[@current_station_index].station_name}"
-
-    if @current_route.all_stations.length-1 != @current_station_index
-      puts "Следующая станция: #{@current_route.all_stations[@current_station_index+1].station_name}"
-    else
-      puts "Следующая станция: Депо"
     end
   end
 
