@@ -1,11 +1,18 @@
 class Train
-  attr_accessor :speed, :current_route, :wagons
+
+  include Manufacturer
+  include InstanceCounter
+
+  attr_accessor :speed, :current_route, :wagons, :all_trains
   attr_reader :number, :current_station_index
+
+  @@all_trains = []
 
   def initialize(number)
     @number = number
     @wagons = []
     @speed = 0
+    @@all_trains << self
   end
 
   def increase_speed(speed)
@@ -41,6 +48,14 @@ class Train
     elsif step == 'backward' && @current_station_index != 0
       @current_station_index -= 1
     end
+  end
+
+  # def self.all_trains
+  #   @@all_trains
+  # end
+
+  def self.find(number)
+    @@all_trains.find { |train| train.number == number }
   end
 
   protected

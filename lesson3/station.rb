@@ -1,11 +1,17 @@
 class Station
 
+  include InstanceCounter
+
+  @@all_stations = []
+
   attr_accessor :all_trains
   attr_reader :station_name
 
   def initialize(station_name)
     @all_trains = []
     @station_name = station_name
+    register_instance
+    @@all_stations << self
   end
 
   def receive_train(train)
@@ -23,5 +29,9 @@ class Station
   def send_train(train, step)
     @all_trains.delete(train)
     train.move(step)
+  end
+
+  def self.all_stations
+    @@all_stations
   end
 end
