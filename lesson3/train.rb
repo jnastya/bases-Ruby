@@ -6,6 +6,8 @@ class Train
   attr_accessor :speed, :current_route, :wagons, :all_trains
   attr_reader :number, :current_station_index
 
+  NUMBER_FORMAT = /^.+{3}\-*.+{2}$/
+
   @@all_trains = {}
 
   def initialize(number)
@@ -13,6 +15,7 @@ class Train
     @wagons = []
     @speed = 0
     @@all_trains[self.number] = self
+    validate!
   end
 
   def increase_speed(speed)
@@ -50,21 +53,24 @@ class Train
     end
   end
 
-  # def self.all_trains
-  #   @@all_trains
-  # end
-
   def self.find(number)
     @@all_trains[number]
   end
 
+  def valid?
+    validate!
+  rescue
+    false
+  end
+
   protected
 
-  # Может быть вынесен тк в текущий момент останавливать поезд нельзя посередине
-  # пути а нужно только в случае присоединения вагонов и этот метод нужно будет
-  # вызвать только изнутри другого метода
   def stop
     @speed = 0
   end
 
+  def validate!
+    raise if number !~ NUMBER_FORMAT
+    true
+  end
 end

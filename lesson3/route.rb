@@ -1,7 +1,7 @@
 class Route
 
   include InstanceCounter
-  
+
   attr_reader :all_stations
 
   def initialize(start_station, end_station)
@@ -18,7 +18,4 @@ class Route
     @all_stations.delete(station)
   end
 
-  def print_all_stations
-    puts "#{@all_stations}"
-  end
 end

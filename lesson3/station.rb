@@ -12,14 +12,11 @@ class Station
     @station_name = station_name
     register_instance
     @@all_stations << self
+    validate!
   end
 
   def receive_train(train)
     @all_trains << train
-  end
-
-  def all_trains
-    puts "На станции находятся поезда #{@all_trains}"
   end
 
   def trains_by_type(type)
@@ -33,5 +30,18 @@ class Station
 
   def self.all_stations
     @@all_stations
+  end
+
+  def valid?
+    validate!
+  rescue
+    false
+  end
+
+  protected
+
+  def validate!
+    raise "Имя станции должно быть минимум из 3 букв" if station_name.length < 3
+    true
   end
 end

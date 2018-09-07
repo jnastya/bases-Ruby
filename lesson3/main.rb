@@ -47,15 +47,28 @@ class RailRoad
         station_name = gets.chomp
         @stations << Station.new(station_name)
       when 2
-        puts "Введите номер поезда"
-        number = gets.chomp
-        puts "Введите тип поезда (pass или cargo)"
-        type = gets.chomp
-        if type == 'pass'
-          @trains << PassTrain.new(number)
-        elsif type == 'cargo'
-          @trains << CargoTrain.new(number)
+        begin
+          puts "Введите номер поезда"
+          number = gets.chomp
+          puts "Введите тип поезда (pass или cargo)"
+          type = gets.chomp
+          if type == 'pass'
+            @trains << PassTrain.new(number)
+            puts "Создан пассажирский поезд с номером #{number}"
+          elsif type == 'cargo'
+            @trains << CargoTrain.new(number)
+            puts "Создан грузовой поезд с номером #{number}"
+          else
+            raise NameError
+          end
+        rescue RuntimeError
+          puts "Номер имеет не правильный формат"
+          retry
+        rescue NameError
+          puts "Ошибка. Введите 'pass' или 'cargo'"
+          retry
         end
+
       when 3
         puts "Текущие добавленные станции"
         @stations.each { |station| puts station.inspect }
