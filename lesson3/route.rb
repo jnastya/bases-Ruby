@@ -29,9 +29,7 @@ class Route
   protected
 
   def validate!
-    @all_stations.each do |station|
-      raise "Ошибка, класс не соответствует!" if station.class != Station
-    end
+    raise "Ошибка, класс не соответствует!" unless @all_stations.all?{ |station| station.is_a?(Station) }
     true
   end
 end

@@ -63,6 +63,10 @@ class Train
     false
   end
 
+  def return_wagons(&block)
+    @wagons.each { |wagon| block.call(wagon) }
+  end
+
   protected
 
   def stop

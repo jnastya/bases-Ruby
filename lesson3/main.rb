@@ -35,7 +35,9 @@ class RailRoad
       puts "8. Отцепить вагон от поезда"
       puts "9. Переместить поезд по маршруту вперед и назад"
       puts "10. Просмотреть список станций"
-      puts "11. Просмотреть список поездов на станции"
+      puts "11. Просмотреть список поездов и их вагонов на станции"
+      puts "12. Занять место или объем в вагоне"
+      puts "13. Стартовый набор"
       puts "0. Выход"
       puts "Выберите вариант..."
       choice = gets.to_i
@@ -81,9 +83,13 @@ class RailRoad
         puts "Введите тип вагона ('pass' или 'cargo')"
         type = gets.chomp
         if type == 'pass'
-          @wagons << PassWagon.new
+          puts "Введите общее кол-во мест:"
+          seats_total = gets.to_i
+          @wagons << PassWagon.new(seats_total)
         elsif type == 'cargo'
-          @wagons << CargoWagon.new
+          puts "Введите общий объем:"
+          volume_total = gets.to_f
+          @wagons << CargoWagon.new(volume_total)
         end
         puts "Вы создали вагоны #{@wagons}"
       when 5
@@ -168,13 +174,65 @@ class RailRoad
         end
       when 10
         puts "Список станций:"
-        @stations.each { |station| puts station.inspect }
+        @stations.each do |station|
+          puts "- Станция #{station.station_name}"
+          station.return_trains do |train|
+            puts "-- Поезд: номер: #{train.number}, тип: #{train.class}, кол-во вагонов: #{train.wagons.length}"
+          end
+        end
       when 11
         puts "Введите индекс станции, для просмотра поездов, находящихся на этой станции"
-        @stations.each { |station| puts station.inspect }
+        @stations.each_with_index { |station, index| puts "#{index}: Станция #{station.station_name}" }
         user_select = gets.to_i
         station = @stations[user_select]
-        station.all_trains.each { |train| puts train.inspect }
+        station.return_trains do |train|
+          puts "-- Поезд: номер: #{train.number}"
+          train.return_wagons do |wagon|
+            puts "--- Номер вагона: #{wagon.number}, тип: #{wagon.class}"
+            if wagon.is_a?(PassWagon)
+              puts "--- Количество занятых мест: #{wagon.occupied_places}, Свободных мест: #{wagon.free_places}"
+            elsif wagon.is_a?(CargoWagon)
+              puts "--- Количество занятого объема: #{wagon.occupied_volume}, Свободного объема: #{wagon.free_volume}"
+            end
+          end
+        end
+      when 12
+        puts "Введите индекс вагона из списка:"
+        @wagons.each_with_index do |wagon, index|
+          puts "#{index}: Номер вагона: #{wagon.number}, тип: #{wagon.class}"
+        end
+        user_select = gets.to_i
+        if @wagons[user_select].is_a?(PassWagon)
+          puts "В выбранном вагоне занятых мест было: #{@wagons[user_select].occupied_places}, свободных мест: #{@wagons[user_select].free_places}"
+          @wagons[user_select].book_seat
+          puts "Занятых мест стало: #{@wagons[user_select].occupied_places}, свободных мест: #{@wagons[user_select].free_places}"
+        elsif @wagons[user_select].is_a?(CargoWagon)
+          puts "В выбранном вагоне занятого объема: #{@wagons[user_select].occupied_volume}, свободного объема: #{@wagons[user_select].free_volume}"
+          puts "Сколько объема добавить?"
+          volume_select = gets.to_f
+          @wagons[user_select].book_volume(volume_select)
+          puts "Занятого объема стало: #{@wagons[user_select].occupied_volume}, свободного объема: #{@wagons[user_select].free_volume}"
+        end
+      when 13
+        a = Station.new('Станция1')
+        b = Station.new('Станция2')
+        c = Station.new('Станция3')
+        @stations = [a, b, c]
+        d = Route.new(a, c)
+        d.add_mid_station(b)
+        @routes = [d]
+        e = PassTrain.new('123-11')
+        e.schedule(d)
+        a.receive_train(e)
+        f = CargoTrain.new('qwe-qe')
+        f.schedule(d)
+        a.receive_train(f)
+        @trains = [e, f]
+        i = PassWagon.new(10)
+        e.add_wagon(i)
+        k = CargoWagon.new(20)
+        f.add_wagon(k)
+        @wagons = [i, k]
       else
         puts "Ошибка. Выберите цифру из списка"
       end
