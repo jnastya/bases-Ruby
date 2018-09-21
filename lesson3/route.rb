@@ -1,5 +1,5 @@
+# Documentation
 class Route
-
   include InstanceCounter
 
   attr_reader :all_stations
@@ -22,14 +22,17 @@ class Route
 
   def valid?
     validate!
-  rescue
+  rescue StandardError
     false
   end
 
   protected
 
   def validate!
-    raise "Ошибка, класс не соответствует!" unless @all_stations.all?{ |station| station.is_a?(Station) }
+    raise 'Ошибка, класс не соответствует!' unless @all_stations.all? do |s|
+      s.is_a?(Station)
+    end
+
     true
   end
 end

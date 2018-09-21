@@ -1,5 +1,5 @@
+# Documentation
 class CargoWagon < Wagon
-
   attr_accessor :volume_total
   attr_reader :volume_occupied
 
@@ -25,8 +25,9 @@ class CargoWagon < Wagon
   protected
 
   def validate!
-    raise "Количество объема должно быть числом!" unless @volume_total.is_a?(Numeric)
-    raise "Количество занятого объема не должно превышать количество объема в вагоне" if @volume_total == @volume_occupied
+    raise 'Введите числовое значение!' unless @volume_total.is_a?(Numeric)
+    raise 'Количество объема превышено' if @volume_total == @volume_occupied
+
     true
   end
 end

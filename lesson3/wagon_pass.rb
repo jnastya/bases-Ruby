@@ -1,5 +1,5 @@
+# Documentation
 class PassWagon < Wagon
-
   attr_accessor :seats_total
   attr_reader :place, :number
 
@@ -26,8 +26,9 @@ class PassWagon < Wagon
   protected
 
   def validate!
-    raise "Количество мест должно быть целым числом!" unless @seats_total.is_a?(Integer)
-    raise "Количество занятых мест не должно превышать количества мест в вагоне" if @seats_total == @seats_occupied
+    raise 'Введите целое число!' unless @seats_total.is_a?(Integer)
+    raise 'Кол-во мест превышено' if @seats_total == @seats_occupied
+
     true
   end
 end
