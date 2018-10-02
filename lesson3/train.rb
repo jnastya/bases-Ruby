@@ -1,12 +1,18 @@
 # Documentation
 class Train
+  extend Accessors
   include Manufacturer
   include InstanceCounter
+  include Validation
 
-  NUMBER_FORMAT = /^.+{3}\-*.+{2}$/
+#  NUMBER_FORMAT = /^.+{3}\-*.+{2}$/
 
   attr_accessor :speed, :cur_route, :wagons, :all_trains
   attr_reader :number, :cur_stat_i
+  strong_attr_accessor :a, Symbol
+  attr_accessor_with_history :a1, :a2, :a3
+
+  validate :number, :format, /^.+{3}\-*.+{2}$/
 
   @@all_trains = {}
 
@@ -63,11 +69,11 @@ class Train
     end
   end
 
-  def valid?
-    validate!
-  rescue StandardError
-    false
-  end
+  # def valid?
+  #   validate!
+  # rescue StandardError
+  #   false
+  # end
 
   def each_wagon(&block)
     @wagons.each(&block)
@@ -79,9 +85,9 @@ class Train
     @speed = 0
   end
 
-  def validate!
-    raise if number !~ NUMBER_FORMAT
-
-    true
-  end
+  # def validate!
+  #   raise if number !~ NUMBER_FORMAT
+  #
+  #   true
+  # end
 end

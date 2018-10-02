@@ -1,9 +1,16 @@
 # Documentation
 class Station
+  extend Accessors
   include InstanceCounter
+  include Validation
 
-  attr_accessor :all_trains
-  attr_reader :station_name
+  attr_accessor :all_trains, :station_name
+
+  strong_attr_accessor :way, String
+  attr_accessor_with_history :m1, :m2, :m3
+
+  validate :station_name, :presence
+  validate :station_name, :type, String
 
   @@all_stations = []
 
@@ -32,21 +39,7 @@ class Station
     train.move(step)
   end
 
-  def valid?
-    validate!
-  rescue StandardError
-    false
-  end
-
   def each_train(&block)
     @all_trains.each(&block)
-  end
-
-  protected
-
-  def validate!
-    raise 'Имя станции должно быть минимум из 3 букв' if station_name.length < 3
-
-    true
   end
 end

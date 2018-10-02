@@ -1,5 +1,7 @@
 require_relative 'module_manufacturer'
 require_relative 'module_instance'
+require_relative 'module_accessor'
+require_relative 'validation'
 require_relative 'station'
 require_relative 'route'
 require_relative 'train'

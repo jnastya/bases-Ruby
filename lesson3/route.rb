@@ -1,14 +1,19 @@
 # Documentation
 class Route
+  extend Accessors
   include InstanceCounter
+  include Validation
 
   attr_reader :all_stations
+  
+  validate :start_station, :type, Station
+  validate :end_station, :type, Station
 
   def initialize(start_station, end_station)
     @start_station = start_station
     @end_station = end_station
-    @all_stations = [start_station, end_station]
     validate!
+    @all_stations = [start_station, end_station]
   end
 
   def add_mid_station(station)
@@ -20,19 +25,4 @@ class Route
     @all_stations.delete(station)
   end
 
-  def valid?
-    validate!
-  rescue StandardError
-    false
-  end
-
-  protected
-
-  def validate!
-    raise 'Ошибка, класс не соответствует!' unless @all_stations.all? do |s|
-      s.is_a?(Station)
-    end
-
-    true
-  end
 end
